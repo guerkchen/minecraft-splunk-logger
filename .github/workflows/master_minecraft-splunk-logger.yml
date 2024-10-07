@@ -14,7 +14,7 @@ env:
   NODE_VERSION: '20.x' # set this to the node version to use (supports 8.x, 10.x, 12.x)
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: windows-latest
     steps:
       - name: 'Checkout GitHub Action'
@@ -34,34 +34,6 @@ jobs:
           npm run test --if-present
           popd
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: node-app
-          path: .
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: node-app
-      
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F46454EF3D6D44E3A5C332CAE92BF77F }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_C1B7ED8DD9964FF4A6164D55F28090B8 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9D9457FA625F4DE39A9966F7E14D1B29 }}
-
       - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
         id: fa
@@ -69,4 +41,4 @@ jobs:
           app-name: 'minecraft-splunk-logger'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A7C9AA7FEB394C2780FB70DBE5D42685 }}
