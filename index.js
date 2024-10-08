@@ -34,7 +34,7 @@ async function fetchData() {
 }
 
 app.timer("loggingTimer", {
-	schedule: '* */2 * * * *',
+	schedule: '0 */2 * * * *',
 	handler: (myTimer, context) => {
 		context.log("Timmer function processed request.")
 		fetchData()
