@@ -1,3 +1,14 @@
+*.js.map
+*.ts
+.git*
+.vscode
+local.settings.json
+test
+getting_started.md
+node_modules/@types/
+node_modules/azure-functions-core-tools/
+node_modules/typescript/
+
 # Logs
 logs
 *.log
@@ -128,3 +139,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+

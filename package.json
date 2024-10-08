@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@azure/functions": "^4.5.1",
     "axios": "^1.7.7",
+    "azure-functions-core-tools": "^4.0.6280",
     "dotenv": "^16.4.5",
     "splunk-logging": "^0.11.1"
   }

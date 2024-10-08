@@ -1,5 +1,6 @@
 const axios = require("axios")
 const splunkLogger = require("splunk-logging").Logger
+const { app } = require('@azure/functions');
 require("dotenv").config()
 
 const splunkConfig = {
@@ -32,4 +33,10 @@ async function fetchData() {
 	logToSplunk(response.data)
 }
 
-fetchData()
+app.timer("loggingTimer", {
+	schedule: '* */2 * * * *',
+	handler: (myTimer, context) => {
+		context.log("Timmer function processed request.")
+		fetchData()
+	}
+})
