@@ -27,6 +27,7 @@ async function fetchData(url) {
 	var response;
 	try{
 		response = await axios.get(url)
+		response.data.icon = ""
 	} catch (error) {
 		console.error(error)
 		return null
@@ -34,16 +35,25 @@ async function fetchData(url) {
 	return response.data
 }
 
+async function logServerStatus(server){
+	console.log("log Status of Server " + server)
+	const url = mcApiUrl + server
+        const data = await fetchData(url)
+        logToSplunk(data)
+}
+
+function logServerStatuses(){
+	servers.forEach((server) => {
+		logServerStatus(server)
+	})
+}
+
 app.timer("loggingTimer", {
-	schedule: '*/5 * * * * *',
+	schedule: '0 */2 * * * *',
 	handler: (myTimer, context) => {
 		context.log("Timmer function processed request.")
-
-		server.forEach((server) => {
-			const url = mcApiUrl + server
-                        const data = fetchData(url)
-                        logToSplunk(data)
-			context.log("handeled " + url)
-		})
+		logServerStatuses()
 	}
 })
+
+logServerStatuses()
