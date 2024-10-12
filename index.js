@@ -8,7 +8,8 @@ const splunkConfig = {
     url: process.env.SPLUNK_URL
 };
 
-const mcApiUrl = 'https://api.mcsrvstat.us/3/' + process.env.MC_DNS
+const servers = process.env.MC_DNS.split(";")
+const mcApiUrl = 'https://api.mcsrvstat.us/3/'
 
 var logger = new splunkLogger(splunkConfig)
 
@@ -22,21 +23,27 @@ function logToSplunk(data){
 	})
 }
 
-async function fetchData() {
+async function fetchData(url) {
 	var response;
 	try{
-		response = await axios.get(mcApiUrl)
+		response = await axios.get(url)
 	} catch (error) {
 		console.error(error)
-		return
+		return null
 	}
-	logToSplunk(response.data)
+	return response.data
 }
 
 app.timer("loggingTimer", {
-	schedule: '0 */2 * * * *',
+	schedule: '*/5 * * * * *',
 	handler: (myTimer, context) => {
 		context.log("Timmer function processed request.")
-		fetchData()
+
+		server.forEach((server) => {
+			const url = mcApiUrl + server
+                        const data = fetchData(url)
+                        logToSplunk(data)
+			context.log("handeled " + url)
+		})
 	}
 })
